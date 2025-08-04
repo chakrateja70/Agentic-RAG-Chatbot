@@ -1,9 +1,8 @@
 import streamlit as st
 import requests
-
+import streamlit.components.v1 as components
 import os
 from typing import Dict, Any, List
-
 import time
 
 
@@ -20,6 +19,8 @@ def init_session_state():
         st.session_state.uploaded_files = []
     if 'system_status' not in st.session_state:
         st.session_state.system_status = None
+    if 'show_architecture' not in st.session_state:
+        st.session_state.show_architecture = False
 
 
 def check_api_health():
@@ -72,6 +73,194 @@ def get_system_status() -> Dict[str, Any]:
         return None
 
 
+def load_mermaid_diagram() -> str:
+    """Load the document_upload_architecture.mermaid file content"""
+    try:
+        # Get the path to document_upload_architecture.mermaid in the ui folder
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        mermaid_path = os.path.join(current_dir, "document_upload_architecture.mermaid")
+        
+        if os.path.exists(mermaid_path):
+            with open(mermaid_path, 'r', encoding='utf-8') as f:
+                return f.read()
+        else:
+            return None
+    except Exception as e:
+        st.error(f"Failed to load mermaid diagram file: {str(e)}")
+        return None
+
+
+def load_query_mermaid_diagram() -> str:
+    """Load the document_query_architecture.mermaid file content"""
+    try:
+        # Get the path to document_query_architecture.mermaid in the ui folder
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        mermaid_path = os.path.join(current_dir, "document_query_architecture.mermaid")
+        
+        if os.path.exists(mermaid_path):
+            with open(mermaid_path, 'r', encoding='utf-8') as f:
+                return f.read()
+        else:
+            return None
+    except Exception as e:
+        st.error(f"Failed to load query mermaid diagram file: {str(e)}")
+        return None
+
+
+def show_architecture():
+    """Display the architecture using Mermaid diagram"""
+    upload_mermaid_content = load_mermaid_diagram()
+    query_mermaid_content = load_query_mermaid_diagram()
+    
+    if upload_mermaid_content and query_mermaid_content:
+        # Display the Mermaid diagram using Streamlit's native support
+        st.subheader("📊 System Architecture Overview")
+        st.write("**Complete workflow diagrams for document upload and query processing:**")
+        
+        # Create HTML content with Mermaid.js to render diagrams
+        mermaid_html_upload = f"""
+        <div style="background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; margin: 20px 0;">
+            <h4 style="color: #333; margin-bottom: 15px;">Document Upload Flow</h4>
+            <div class="mermaid" style="background-color: white;">
+                {upload_mermaid_content}
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+        <script>
+            mermaid.initialize({{
+                startOnLoad: true, 
+                theme: 'base',
+                themeVariables: {{
+                    primaryColor: '#ffffff',
+                    primaryTextColor: '#333333',
+                    primaryBorderColor: '#cccccc',
+                    lineColor: '#666666',
+                    background: '#ffffff',
+                    mainBkg: '#ffffff',
+                    secondBkg: '#f8f9fa',
+                    tertiaryColor: '#ffffff'
+                }}
+            }});
+        </script>
+        """
+        
+        mermaid_html_query = f"""
+        <div style="background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; margin: 20px 0;">
+            <h4 style="color: #333; margin-bottom: 15px;">Query Processing Flow</h4>
+            <div class="mermaid" style="background-color: white;">
+                {query_mermaid_content}
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+        <script>
+            mermaid.initialize({{
+                startOnLoad: true, 
+                theme: 'base',
+                themeVariables: {{
+                    primaryColor: '#ffffff',
+                    primaryTextColor: '#333333',
+                    primaryBorderColor: '#cccccc',
+                    lineColor: '#666666',
+                    background: '#ffffff',
+                    mainBkg: '#ffffff',
+                    secondBkg: '#f8f9fa',
+                    tertiaryColor: '#ffffff'
+                }}
+            }});
+        </script>
+        """
+        
+        # Create two columns for the diagrams
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.write("**Document Upload Flow:**")
+            # Display the Mermaid diagram using HTML components
+            components.html(mermaid_html_upload, height=600, scrolling=True)
+        
+        with col2:
+            st.write("**Query Processing Flow:**")
+            # Display the query Mermaid diagram using HTML components
+            components.html(mermaid_html_query, height=600, scrolling=True)
+        
+        # Add workflow explanations
+        st.markdown("---")
+        st.subheader("🔍 Workflow Details")
+        
+        # Upload workflow explanation
+        with st.expander("📤 Document Upload Workflow", expanded=False):
+            st.markdown("""
+            **Step-by-step process:**
+            1. **Client Upload**: User selects and uploads documents via Streamlit UI
+            2. **API Validation**: FastAPI validates file types and creates temporary storage
+            3. **Coordinator Agent**: Orchestrates the entire upload process with trace ID tracking
+            4. **Ingestion Agent**: Handles document processing pipeline:
+               - Document loading (PDF, DOCX, PPTX, CSV, TXT, Markdown)
+               - Text chunking with overlap (500 chars, 100 overlap)
+               - Parallel processing for performance
+            5. **Document Processor**: Extracts and cleans text content
+            6. **Embedding Service**: Converts text chunks to vector embeddings (Google AI)
+            7. **Vector Store**: Stores embeddings in Pinecone with metadata
+            8. **Response Chain**: Success/failure status propagated back to client
+            """)
+        
+        # Query workflow explanation
+        with st.expander("🔍 Query Processing Workflow", expanded=False):
+            st.markdown("""
+            **Step-by-step process:**
+            1. **Client Query**: User submits question via Streamlit chat interface
+            2. **API Processing**: FastAPI receives and validates query request
+            3. **Coordinator Agent**: Manages two-stage process:
+               - **Stage 1**: Document retrieval with separate trace ID
+               - **Stage 2**: LLM response generation with separate trace ID
+            4. **Retrieval Agent**: 
+               - Converts query to embeddings
+               - Performs similarity search in Pinecone (top-k=8)
+               - Returns most relevant chunks and sources
+            5. **LLM Response Agent**:
+               - Combines query + retrieved context
+               - Sends structured prompt to Groq Llama model
+               - Generates contextual answer (max 300 tokens)
+            6. **Response Assembly**: Coordinator combines results with metadata
+            7. **Client Response**: Structured answer with sources and processing time
+            """)
+        
+        # Technical details
+        with st.expander("⚙️ Technical Implementation", expanded=False):
+            st.markdown("""
+            **Key Technologies:**
+            - **Framework**: FastAPI + Streamlit
+            - **Architecture**: Agent-based with Model Context Protocol (MCP)
+            - **Vector Database**: Pinecone (cosine similarity)
+            - **Embeddings**: Google Generative AI (models/embedding-001)
+            - **LLM**: Groq Llama (meta-llama/llama-4-scout-17b-16e-instruct)
+            - **Processing**: Parallel document processing with ThreadPoolExecutor
+            - **Monitoring**: End-to-end trace ID tracking
+            
+            **Performance Features:**
+            - Parallel document loading and chunking
+            - Lazy initialization of services
+            - Background task support
+            - Comprehensive error handling
+            - Request timeout management (5min upload, 30s query)
+            """)
+        
+        # Alternative: Show code view for users who want to see the raw Mermaid code
+        with st.expander("📋 View Mermaid Code", expanded=False):
+            col1_code, col2_code = st.columns(2)
+            with col1_code:
+                st.write("**Upload Flow Code:**")
+                st.code(upload_mermaid_content, language="mermaid")
+            with col2_code:
+                st.write("**Query Flow Code:**")
+                st.code(query_mermaid_content, language="mermaid")
+    else:
+        st.error("❌ Mermaid diagram files not found. Please ensure both diagram files exist in the UI folder.")
+        st.info("Expected files:")
+        st.write("• app/ui/document_upload_architecture.mermaid")
+        st.write("• app/ui/document_query_architecture.mermaid")
+
+
 def main():
     """Main Streamlit application"""
     st.set_page_config(
@@ -98,6 +287,12 @@ def main():
         **Supported Formats:**
         - PDF, DOCX, PPTX, CSV, TXT, Markdown
         """)
+        st.markdown("---")
+        
+        # Architecture/Workflow Button
+        st.subheader("🏗️ System Overview")
+        if st.button("📊 View Architecture & Workflow", type="secondary"):
+            st.session_state.show_architecture = not st.session_state.show_architecture
         
         st.markdown("---")
         
@@ -130,6 +325,44 @@ def main():
     # Main content
     st.title("🤖 Agentic RAG Chatbot")
     st.markdown("Upload documents and ask questions using our agent-based RAG system with Model Context Protocol (MCP)")
+    
+    # Check if architecture should be displayed
+    if st.session_state.show_architecture:
+        st.subheader("🏗️ System Architecture & Workflow")
+        
+        # Add close button
+        col1, col2 = st.columns([6, 1])
+        with col2:
+            if st.button("❌ Close", key="close_architecture"):
+                st.session_state.show_architecture = False
+                st.rerun()
+        
+        with col1:
+            st.markdown("**Complete system architecture with technical implementation details**")
+        
+        # Display the architecture
+        show_architecture()
+        
+        st.markdown("---")
+        
+        # Add a button to return to main interface
+        if st.button("🔙 Back to Main Interface", type="primary"):
+            st.session_state.show_architecture = False
+            st.rerun()
+            
+        return  # Don't show the rest of the interface when architecture is displayed
+    
+    # Navigation buttons
+    col1, col2, col3 = st.columns([2, 2, 1])
+    with col1:
+        if st.button("🏗️ View Architecture", type="secondary"):
+            st.session_state.show_architecture = True
+            st.rerun()
+    with col2:
+        if st.button("💬 Chat Interface", type="primary", disabled=True):
+            pass  # Already on main interface
+    
+    st.markdown("---")
     
     # File Upload Section
     st.subheader("📁 Upload Documents")

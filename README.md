@@ -127,6 +127,20 @@ Agentic-RAG-Chatbot/
    ```
    The UI will be available at: http://localhost:8501
 
+## 🏗️ Architecture Viewer
+
+The application includes an interactive architecture viewer accessible through the Streamlit UI:
+
+- **📊 View Architecture Button**: Click to view the complete system architecture
+- **Interactive Diagrams**: Detailed visual representation of the multi-agent system
+- **Technical Details**: Component descriptions, data flows, and MCP protocol examples
+- **Performance Metrics**: System capabilities and scalability information
+
+Access the architecture viewer by:
+1. Starting the Streamlit UI: `python run_ui.py`
+2. Clicking the "🏗️ View Architecture" button in the main interface
+3. Or using the "📊 View Architecture & Workflow" button in the sidebar
+
 ## 📚 Supported Document Formats
 
 - **PDF** (.pdf) - Research papers, reports, manuals
@@ -162,6 +176,7 @@ Agentic-RAG-Chatbot/
 - Interactive chat interface
 - Query history and source tracking
 - System health monitoring
+- **🏗️ Interactive Architecture Viewer** - View complete system architecture and workflow
 
 ## 🔧 API Endpoints
 
