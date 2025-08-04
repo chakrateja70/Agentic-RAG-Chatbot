@@ -35,7 +35,7 @@ All agents communicate using structured MCP messages:
 ## 📁 Project Structure
 
 ```
-Smart-Research-Assistant-main/
+Agentic-RAG-Chatbot/
 ├── app/
 │   ├── api/                 # FastAPI endpoints
 │   │   └── main.py
@@ -81,7 +81,7 @@ Smart-Research-Assistant-main/
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd Smart-Research-Assistant-main
+   cd Agentic-RAG-Chatbot
    ```
 
 2. **Install dependencies**
@@ -212,27 +212,11 @@ GET /health
 
 ## 🛠️ Development
 
-### Running Tests
-```bash
-# Add test commands when implemented
-python -m pytest tests/
-```
-
 ### Code Structure
 - **Agents**: Inherit from `BaseAgent` and implement specific message handlers
 - **Services**: Business logic for embeddings, LLM interactions, etc.
 - **Models**: Pydantic models for MCP message structures
 - **Core**: Exception handling, message broker, status codes
-
-### Adding New Document Formats
-1. Update `app/utils/document_processor.py`
-2. Add new loader in the `DocumentProcessor` class
-3. Update supported formats in API and UI
-
-### Adding New Query Types
-1. Update `app/agents/llm_response_agent.py`
-2. Add new handler method
-3. Update UI query type options
 
 ## 📊 Performance
 
@@ -246,8 +230,6 @@ python -m pytest tests/
 - API key management through environment variables
 - Input validation and sanitization
 - Error handling without exposing sensitive information
-- CORS configuration for web access
-
 ## 🚧 Troubleshooting
 
 ### Common Issues
@@ -271,11 +253,6 @@ python -m pytest tests/
    - Check API quota limits
    - Review query content for inappropriate content
 
-### Debug Mode
-Enable debug logging by setting environment variable:
-```bash
-export LOG_LEVEL=DEBUG
-```
 
 ## 🎯 Challenges Faced & Improvements
 
@@ -289,25 +266,16 @@ export LOG_LEVEL=DEBUG
 
 4. **Error Handling Across Agents**: Coordinating error handling across multiple agents while maintaining system stability was challenging. Implementing proper exception propagation and recovery mechanisms was crucial.
 
-5. **API Key Management**: Managing multiple API keys (Groq, Google, Pinecone) securely while keeping the setup process user-friendly required careful consideration of environment variable handling.
-
 ### Suggested Improvements
 
-1. **Enhanced Caching**: Implement Redis caching for frequently accessed embeddings and query results to improve response times.
+1. **Advanced Document Processing**: Add support for more document formats (Excel, images with OCR) and implement better table extraction from PDFs.
 
-2. **Advanced Document Processing**: Add support for more document formats (Excel, images with OCR) and implement better table extraction from PDFs.
+2. **User Authentication**: Add user authentication and document ownership to support multi-tenant usage.
 
-3. **User Authentication**: Add user authentication and document ownership to support multi-tenant usage.
+3. **Advanced Query Types**: Implement more sophisticated query types like "compare documents", "timeline analysis", and "trend detection".
 
-4. **Advanced Query Types**: Implement more sophisticated query types like "compare documents", "timeline analysis", and "trend detection".
+4. **Monitoring & Analytics**: Add comprehensive logging, metrics collection, and performance monitoring dashboards.
 
-5. **Monitoring & Analytics**: Add comprehensive logging, metrics collection, and performance monitoring dashboards.
-
-6. **Scalability**: Implement horizontal scaling with load balancing and distributed agent processing.
-
-7. **Testing Suite**: Add comprehensive unit tests, integration tests, and end-to-end testing for all components.
-
-8. **Documentation**: Create detailed API documentation with examples and interactive testing interface.
 
 ## 🤝 Contributing
 

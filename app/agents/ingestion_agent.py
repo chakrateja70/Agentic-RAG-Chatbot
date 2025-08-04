@@ -114,8 +114,8 @@ class IngestionAgent(BaseAgent):
                         "processing_time": time.time() - start_time
                     }
                 
-                # Step 1: Load documents
-                pages = document_processor.load_documents(tmpdirname)
+                # Step 1: Load documents with parallel processing
+                pages = document_processor.load_documents(tmpdirname, use_parallel=True)
                 
                 if not pages:
                     return {
@@ -128,8 +128,8 @@ class IngestionAgent(BaseAgent):
                         "processing_time": time.time() - start_time
                     }
                 
-                # Step 2: Split documents into chunks
-                chunks = document_processor.split_chunks(pages)
+                # Step 2: Split documents into chunks with parallel processing
+                chunks = document_processor.split_chunks(pages, use_parallel=True)
                 
                 if not chunks:
                     return {

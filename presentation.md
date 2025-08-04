@@ -254,7 +254,7 @@
 ```bash
 # Clone repository
 git clone <repository-url>
-cd Smart-Research-Assistant-main
+cd Agentic-RAG-Chatbot
 
 # Install dependencies
 pip install -r requirements.txt
