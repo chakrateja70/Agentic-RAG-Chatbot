@@ -80,7 +80,7 @@ Agentic-RAG-Chatbot/
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/chakrateja70/Agentic-RAG-Chatbot.git
    cd Agentic-RAG-Chatbot
    ```
 
