@@ -84,12 +84,24 @@ Agentic-RAG-Chatbot/
    cd Agentic-RAG-Chatbot
    ```
 
-2. **Install dependencies**
+2. **Create and activate virtual environment**
+   ```bash
+   # Create virtual environment
+   python -m venv venv
+   
+   # Activate virtual environment
+   # On Windows:
+   venv\Scripts\activate
+   # On macOS/Linux:
+   source venv/bin/activate
+   ```
+
+3. **Install dependencies**
    ```bash
    pip install -r requirements.txt
    ```
 
-3. **Set up environment variables**
+4. **Set up environment variables**
    ```bash
    # Create .env file
    echo "GROQ_API_KEY=your_groq_api_key_here" > .env
@@ -97,7 +109,7 @@ Agentic-RAG-Chatbot/
    echo "PINECONE_API_KEY=your_pinecone_api_key_here" >> .env
    ```
 
-4. **Start the API server**
+5. **Start the API server**
    ```bash
    python run_api.py
    ```
@@ -105,8 +117,12 @@ Agentic-RAG-Chatbot/
    - API Documentation: http://localhost:8000/docs
    - Health Check: http://localhost:8000/health
 
-5. **Start the UI (in a new terminal)**
+6. **Start the UI (in a new terminal)**
    ```bash
+   # Make sure to activate the virtual environment in the new terminal
+   # On Windows: venv\Scripts\activate
+   # On macOS/Linux: source venv/bin/activate
+   
    python run_ui.py
    ```
    The UI will be available at: http://localhost:8501
